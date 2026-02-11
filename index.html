@@ -220,10 +220,13 @@
             const uniqueEntries = {}; leaderboardData.forEach(d => { if (d.game === currentGame) { if (!uniqueEntries[d.name] || d.score > uniqueEntries[d.name].score) uniqueEntries[d.name] = d; } });
             const filtered = Object.values(uniqueEntries).sort((a,b) => b.score - a.score).slice(0, 5);
             list.innerHTML = filtered.length ? "" : "<p class='opacity-50 italic'>NO RECORDS FOUND</p>";
-            filtered.forEach((entry, idx) => { list.innerHTML += `<div class="flex justify-between border-b-2 border-grey/20 pb-2"><span class="mono tracking-tight">${idx + 1}. ${entry.name}</span><span class="text-pink-600 font-black">${Math.floor(entry.score)}</span></div>`; });
+            filtered.forEach((entry, idx) => { 
+                const safeName = (entry.name || 'ANON').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                list.innerHTML += `<div class="flex justify-between border-b-2 border-grey/20 pb-2"><span class="mono tracking-tight">${idx + 1}. ${safeName}</span><span class="text-pink-600 font-black">${Math.floor(entry.score)}</span></div>`; 
+            });
         };
 
-        window.saveArcadeScore = async (score) => { if (!user || score < 1) return; try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: currentActiveSessionName.toUpperCase(), score: score, game: currentGame, timestamp: Date.now() }); } catch (e) {} };
+        const saveArcadeScore = async (score) => { if (!user || score < 1) return; try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: currentActiveSessionName.toUpperCase(), score: score, game: currentGame, timestamp: Date.now() }); } catch (e) {} };
         window.addEventListener('load', init);
         
         // --- BILLION DOLLAR JS: CURSOR & INTERACTION ---
@@ -254,7 +257,7 @@
 
         // --- GAME ENGINE 2.0 (MOBILE OPTIMIZED) ---
         const canvas = document.getElementById('game-canvas'); const ctx = canvas.getContext('2d');
-        let currentGame = 'dino', gameActive = false, score = 0, loop, frame = 0, obstacles = [], snake = [{x: 5, y: 5}], food = {x: 10, y: 10}, dir = {x: 1, y: 0}, dino = { y: 390, v: 0 };
+        let currentGame = 'dino', gameActive = false, score = 0, loop, frame = 0, obstacles = [], snake = [{x: 5, y: 5}], food = {x: 10, y: 10}, dir = {x: 1, y: 0}, nextDir = {x: 1, y: 0}, dino = { y: 390, v: 0 };
         
         // Mobile Detection
         const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
@@ -267,7 +270,7 @@
         window.startGame = () => { document.getElementById('game-overlay').style.display = 'none'; gameActive = true; score = 0; obstacles = []; snake = [{x:5,y:5}]; dir = {x:1,y:0}; frame = 0; dino.y = 390; dino.v = 0; runLoop(); };
         
         const initGame = () => { 
-            // Dynamic Canvas Sizing
+            if(gameActive) return; // Prevent breaking the grid during gameplay
             const container = canvas.parentElement;
             canvas.width = container.clientWidth; 
             canvas.height = 450; 
@@ -308,6 +311,7 @@
                 const updateRate = isMobile ? 10 : 7;
                 
                 if(frame % updateRate === 0) {
+                    dir = nextDir; // UPDATE DIRECTION ONLY ON GAME TICK
                     const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y}; 
                     const cellSize = 25;
                     const gridW = Math.floor(canvas.width / cellSize);
@@ -334,16 +338,17 @@
             loop = requestAnimationFrame(runLoop);
         };
         
-        const gameOver = () => { gameActive = false; cancelAnimationFrame(loop); window.saveArcadeScore(Math.floor(score)); document.getElementById('overlay-title').innerText = "GAME OVER"; document.getElementById('overlay-btn').innerText = "RETRY"; document.getElementById('overlay-btn').onclick = startGame; document.getElementById('game-overlay').style.display = 'flex'; };
+        const gameOver = () => { gameActive = false; cancelAnimationFrame(loop); saveArcadeScore(Math.floor(score)); document.getElementById('overlay-title').innerText = "GAME OVER"; document.getElementById('overlay-btn').innerText = "RETRY"; document.getElementById('overlay-btn').onclick = startGame; document.getElementById('game-overlay').style.display = 'flex'; };
         
         window.handleControl = (type) => { 
             if (currentGame === 'dino' && (type === 'up' || type === 'tap') && dino.y === 390) dino.v = isMobile ? -18 : -22; 
             if (currentGame === 'snake') { 
-                if(type === 'up' && dir.y !== 1) dir = {x:0, y:-1}; 
-                if(type === 'down' && dir.y !== -1) dir = {x:0, y:1}; 
-                if(type === 'left' && dir.x !== 1) dir = {x:-1, y:0}; 
-                if(type === 'right' && dir.x !== -1) dir = {x:1, y:0}; 
-            } 
+    // Check against 'dir' (current movement) but update 'nextDir' (buffer)
+                if(type === 'up' && dir.y !== 1) nextDir = {x:0, y:-1}; 
+                if(type === 'down' && dir.y !== -1) nextDir = {x:0, y:1}; 
+                if(type === 'left' && dir.x !== 1) nextDir = {x:-1, y:0}; 
+                if(type === 'right' && dir.x !== -1) nextDir = {x:1, y:0}; 
+}
         };
         
         window.addEventListener('keydown', e => { 
