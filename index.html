@@ -137,7 +137,7 @@ body { font-family: 'Public Sans', sans-serif; background-color: var(--bg); colo
             </div>
 
             <div id="game-step-3" class="hidden flex flex-col gap-6">
-                <p class="mono text-white mb-2 text-sm opacity-60 uppercase tracking-widest select-none">SELECT MODULE</p>
+                <p class="mono text-white mb-2 text-sm opacity-60 uppercase tracking-widest select-none">MENU</p>
                 <button onclick="switchGame('dino')" onmousedown="createRipple(event)" class="interactive-btn bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-1">DINO SURVIVAL</button>
                 <button onclick="switchGame('snake')" onmousedown="createRipple(event)" class="interactive-btn bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-1">CLASSIC SNAKE</button>
             </div>
@@ -177,8 +177,8 @@ body { font-family: 'Public Sans', sans-serif; background-color: var(--bg); colo
                         <!-- Overlay Menu -->
                         <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/95 z-20">
                             <div class="text-center p-8 border-8 border-white bg-black shadow-[10px_10px_0px_var(--lime)] max-w-[90%]">
-                                <h3 id="overlay-title" class="text-3xl md:text-5xl font-black uppercase mb-8 italic squiddrill-title select-none text-white">SYSTEM READY</h3>
-                                <button id="overlay-btn" onclick="openArcadeMenu()" onmousedown="createRipple(event)" class="interactive-btn bg-white text-black px-10 py-5 text-xl font-black uppercase hover:bg-lime border-4 border-black w-full">INITIALIZE</button>
+                                <h3 id="overlay-title" class="text-3xl md:text-5xl font-black uppercase mb-8 italic squiddrill-title select-none text-white">ARCADE READY</h3>
+                                <button id="overlay-btn" onclick="openArcadeMenu()" onmousedown="createRipple(event)" class="interactive-btn bg-white text-black px-10 py-5 text-xl font-black uppercase hover:bg-lime border-4 border-black w-full">HOP IN</button>
                             </div>
                         </div>
                     </div>
