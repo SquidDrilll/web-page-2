@@ -10,7 +10,7 @@
     <title>SQUIDDRILL | ARCADE 💀</title>
     <meta name="title" content="SQUIDDRILL ARCADE">
     <meta name="description" content="High-performance logic games.">
-    <link rel="icon" type="image/jpg" href="arcade.jpg">
+    <link rel="icon" type="image/png" href="arcade.png">
     <link rel="canonical" href="https://arcade.squiddrill.fun" />
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -202,9 +202,6 @@
             await signInAnonymously(auth);
             onAuthStateChanged(auth, async (u) => {
                 user = u; if (!user) return;
-                const statsDoc = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counters');
-                try { const snap = await getDoc(statsDoc); if (!snap.exists()) await setDoc(statsDoc, { total: 1 }); else await updateDoc(statsDoc, { total: increment(1) }); } catch (e) {}
-                onSnapshot(statsDoc, (doc) => { document.getElementById('v-count').innerText = (doc.data()?.total || 0).toLocaleString(); });
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), (snapshot) => { leaderboardData = snapshot.docs.map(d => d.data()); updateLeaderboardUI(); });
             });
         };
