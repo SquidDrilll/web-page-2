@@ -6,8 +6,12 @@
     <meta name="theme-color" content="#0a0a0a">
     <meta name="color-scheme" content="dark">
     
+    <!-- Primary Meta Tags -->
     <title>SQUIDDRILL | ARCADE 💀</title>
-    <link rel="icon" type="image/png" href="arcade.png">
+    <meta name="title" content="SQUIDDRILL ARCADE">
+    <meta name="description" content="High-performance logic games.">
+    <link rel="icon" type="image/jpg" href="arcade.jpg">
+    <link rel="canonical" href="https://arcade.squiddrill.fun" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,23 +24,76 @@
             --bg: #0a0a0a; --white: #ffffff; --grey: #333333; --lime: #C3FF00; --pink: #FF0055; --cyan: #00F0FF; --orange: #FF5C00;
         }
         @keyframes flicker { 0% { opacity: 0.97; } 5% { opacity: 0.95; } 100% { opacity: 1; } }
-        body { font-family: 'Public Sans', sans-serif; background-color: var(--bg); color: var(--white); overflow-x: hidden; background-image: radial-gradient(rgba(255,255,255,0.08) 1.5px, transparent 1.5px); background-size: 35px 35px; animation: flicker 0.15s infinite; }
+        body { font-family: 'Public Sans', sans-serif; background-color: var(--bg); color: var(--white); overflow-x: hidden; background-image: radial-gradient(rgba(255,255,255,0.08) 1.5px, transparent 1.5px); background-size: 35px 35px; animation: flicker 0.15s infinite; touch-action: pan-y; }
+        
+        /* --- AESTHETIC CURSOR ENGINE --- */
         @media (pointer: fine) { body { cursor: none; } }
-        #cursor { width: 24px; height: 24px; background: #fff; border-radius: 2px; position: fixed; pointer-events: none; z-index: 1000000; mix-blend-mode: difference; display: none; align-items: center; justify-content: center; }
+        
+        #cursor { 
+            width: 30px; height: 30px; 
+            border: 2px solid var(--lime); 
+            border-radius: 50%; 
+            position: fixed; pointer-events: none; z-index: 1000000; 
+            display: none; align-items: center; justify-content: center; 
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            mix-blend-mode: difference;
+        }
+        #cursor::after {
+            content: ''; width: 4px; height: 4px; background: var(--pink); border-radius: 50%;
+        }
         @media (pointer: fine) { #cursor { display: flex; } }
-        @keyframes brutal-pulse { 0%, 100% { text-shadow: 4px 4px 0px var(--pink); transform: skewX(-10deg) scale(1); } 50% { text-shadow: -4px -4px 0px var(--cyan); transform: skewX(-8deg) scale(1.02); } }
-        .brutal-heading { display: inline-block; color: var(--lime); transform: skewX(-10deg); text-shadow: 6px 6px 0px var(--pink); animation: brutal-pulse 4s infinite ease-in-out; }
+        
+        /* --- INTERACTION PHYSICS --- */
+        .interactive-btn {
+            position: relative; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .interactive-btn::after {
+            content: ""; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg); pointer-events: none; transition: none;
+        }
+        .interactive-btn:hover::after { animation: shine-swipe 0.75s ease-out forwards; }
+        @keyframes shine-swipe { 0% { left: -150%; } 100% { left: 150%; } }
+        .interactive-btn:active { transform: scale(0.96) translateY(2px) !important; box-shadow: 2px 2px 0px currentColor !important; }
+
+        .ripple {
+            position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.8);
+            transform: scale(0); animation: ripple-anim 0.6s linear; pointer-events: none; z-index: 100;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* --- LAYOUT UTILS --- */
+        .brutal-heading { display: inline-block; color: var(--lime); transform: skewX(-10deg); text-shadow: 6px 6px 0px var(--pink); }
         .neo-box { background: var(--bg); border: 4px solid var(--lime); box-shadow: 14px 14px 0px 0px var(--lime); transform: translate(-6px, -6px); transition: all 0.25s; position: relative; }
-        @keyframes glitch-text { 0% { transform: translate(0); text-shadow: 3px 3px var(--pink), -3px -3px var(--cyan); } 2% { transform: translate(-2px, 2px); } 100% { transform: translate(0); } }
         .squiddrill-title { animation: glitch-text 3s infinite; }
-        .nav-link { padding: 0.75rem 1.25rem; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; border: 4px solid white; display: flex; align-items: center; gap: 6px; background: white; color: black; box-shadow: 4px 4px 0px rgba(255,255,255,0.2); }
-        .nav-link:hover { background: var(--lime); transform: scale(1.1) rotate(-1deg); }
+        @keyframes glitch-text { 0% { transform: translate(0); text-shadow: 3px 3px var(--pink), -3px -3px var(--cyan); } 2% { transform: translate(-2px, 2px); } 100% { transform: translate(0); } }
+
+        .nav-link { 
+            position: relative; overflow: hidden; padding: 0.75rem 1.25rem; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; 
+            border: 4px solid white; display: flex; align-items: center; gap: 6px; background: white; color: black; box-shadow: 4px 4px 0px rgba(255,255,255,0.2); 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .nav-link:hover { background: var(--lime); transform: scale(1.1) rotate(-1deg); box-shadow: 6px 6px 0px black; }
+        .nav-link:active { transform: scale(0.95) !important; box-shadow: 2px 2px 0px black !important; }
         .nav-active { background: var(--orange) !important; color: white !important; box-shadow: 8px 8px 0px white !important; }
+
         .modal-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
         .grey-dialog { background: #1a1a1a; border: 8px solid white; box-shadow: 30px 30px 0px 0px var(--lime); padding: 3.5rem; width: 95%; max-width: 600px; text-align: center; }
-        #game-canvas { image-rendering: pixelated; background: #000000; width: 100%; height: 450px; border: 8px solid white; touch-action: none; }
-        .back-btn { background: white; color: black; border: 4px solid black; font-weight: 900; text-transform: uppercase; box-shadow: 8px 8px 0px var(--lime); padding: 1.5rem 3rem; display: inline-block; cursor: pointer; width: 100%; text-align: center; }
+        
+        #game-canvas { image-rendering: pixelated; background: #000000; width: 100%; height: 450px; border: 8px solid white; touch-action: none; display: block; }
+        
+        .back-btn { 
+            background: white; color: black; border: 4px solid black; font-weight: 900; text-transform: uppercase; box-shadow: 8px 8px 0px var(--lime); padding: 1.5rem 3rem; display: inline-block; cursor: pointer; width: 100%; text-align: center; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .back-btn:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--pink); background: var(--lime); }
+        .back-btn:active { transform: translate(0, 0); box-shadow: 4px 4px 0px var(--cyan); }
+
         .full-view-container { position: fixed; inset: 0; overflow-y: auto; z-index: 1500; background: black; padding-top: 100px; padding-bottom: 100px; }
+        
         @media (max-width: 640px) { .nav-link span { display: none; } }
     </style>
 </head>
@@ -44,73 +101,87 @@
 
     <div id="cursor"></div>
 
-    <!-- Arcade Setup Modal -->
+    <!-- Modal -->
     <div id="game-modal" class="modal-overlay">
-        <div class="grey-dialog">
-            <h2 class="text-4xl md:text-5xl font-black text-white uppercase italic mb-6 tracking-tighter brutal-heading">Sector Entry</h2>
-            <div id="game-step-1" class="space-y-6">
-                <input id="arcade-nickname" type="text" maxlength="12" placeholder="USERNAME (MANDATORY)" class="w-full bg-black border-4 border-white p-6 mono text-white uppercase outline-none focus:border-lime text-center text-2xl">
-                <button onclick="validateNickname()" class="w-full bg-white text-black py-4 font-black uppercase text-xl border-4 border-black shadow-[6px_6px_0px_var(--lime)]">CONTINUE</button>
+        <div class="grey-dialog relative">
+            <h2 class="text-4xl md:text-5xl font-black text-white uppercase italic mb-6 tracking-tighter brutal-heading select-none">Sector Entry</h2>
+            
+            <div id="game-step-1" class="space-y-8">
+                <input id="arcade-nickname" type="text" maxlength="12" placeholder="USERNAME" class="w-full bg-black border-4 border-white p-6 mono text-white uppercase outline-none focus:border-lime text-center text-2xl transition-all focus:scale-105 shadow-[6px_6px_0px_white]">
+                <button onclick="validateNickname()" onmousedown="createRipple(event)" class="interactive-btn w-full bg-white text-black py-5 font-black uppercase text-xl border-4 border-black shadow-[8px_8px_0px_var(--lime)] hover:bg-lime">CONTINUE</button>
             </div>
-            <div id="game-step-2" class="hidden flex flex-col gap-4">
-                <p class="mono text-white mb-4 text-sm opacity-60 uppercase tracking-widest">Select Control Interface</p>
-                <button onclick="selectDevice('desktop')" class="bg-white text-black py-5 font-black uppercase text-xl border-4 border-black shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Keyboard</button>
-                <button onclick="selectDevice('touch')" class="bg-pink-500 text-white py-5 font-black uppercase text-xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Touch</button>
+
+            <div id="game-step-2" class="hidden flex flex-col gap-6">
+                <p class="mono text-white mb-2 text-sm opacity-60 uppercase tracking-widest select-none">CONTROL INTERFACE</p>
+                <!-- Merged selection for simplicity as we auto-detect now, but keeping for user preference -->
+                <button onclick="selectDevice('desktop')" onmousedown="createRipple(event)" class="interactive-btn bg-white text-black py-5 font-black uppercase text-xl border-4 border-black shadow-[8px_8px_0px_white] hover:translate-x-1">KEYBOARD / MOUSE</button>
+                <button onclick="selectDevice('touch')" onmousedown="createRipple(event)" class="interactive-btn bg-pink-500 text-white py-5 font-black uppercase text-xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-1">TOUCHSCREEN</button>
             </div>
-            <div id="game-step-3" class="hidden flex flex-col gap-4">
-                <p class="mono text-white mb-4 text-sm opacity-60 uppercase tracking-widest">CHOOSE MODULE</p>
-                <button onclick="switchGame('dino')" class="bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Dino Survival</button>
-                <button onclick="switchGame('snake')" class="bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Classic Snake</button>
+
+            <div id="game-step-3" class="hidden flex flex-col gap-6">
+                <p class="mono text-white mb-2 text-sm opacity-60 uppercase tracking-widest select-none">SELECT MODULE</p>
+                <button onclick="switchGame('dino')" onmousedown="createRipple(event)" class="interactive-btn bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-1">DINO SURVIVAL</button>
+                <button onclick="switchGame('snake')" onmousedown="createRipple(event)" class="interactive-btn bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-1">CLASSIC SNAKE</button>
             </div>
-            <button onclick="document.getElementById('game-modal').style.display='none'" class="mt-10 text-white font-black uppercase text-xs border-b-2 border-white opacity-50">ABORT</button>
+            
+            <button onclick="document.getElementById('game-modal').style.display='none'" class="mt-12 text-white font-black uppercase text-xs border-b-2 border-white opacity-40 hover:opacity-100 hover:text-pink-500 transition-colors p-2">ABORT SEQUENCE</button>
         </div>
     </div>
 
     <nav class="fixed top-0 left-0 w-full z-[2000] bg-black border-b-8 border-white px-6 py-5 flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <span class="mono text-xs md:text-sm font-black bg-white text-black px-4 py-2 uppercase">
+            <span class="mono text-xs md:text-sm font-black bg-white text-black px-4 py-2 uppercase select-none">
                 Arcade <span id="v-count" class="text-pink-600 animate-pulse">...</span> ⚡
             </span>
         </div>
         <div class="flex gap-2 sm:gap-3">
-            <a href="https://squiddrill.fun" class="nav-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
-            <a href="https://arcade.squiddrill.fun" class="nav-link nav-active"><i class="fa-solid fa-gamepad"></i> <span>Arcade</span></a>
-            <a href="https://socials.squiddrill.fun" class="nav-link"><i class="fa-solid fa-network-wired"></i> <span>Socials</span></a>
+            <a href="https://squiddrill.fun" class="nav-link" onmousedown="createRipple(event)"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+            <a href="https://arcade.squiddrill.fun" class="nav-link nav-active" onmousedown="createRipple(event)"><i class="fa-solid fa-gamepad"></i> <span>Arcade</span></a>
+            <a href="https://socials.squiddrill.fun" class="nav-link" onmousedown="createRipple(event)"><i class="fa-solid fa-network-wired"></i> <span>Socials</span></a>
         </div>
     </nav>
 
     <div id="arcade-view" class="page-view full-view-container">
-        <div class="max-w-6xl mx-auto px-6 space-y-10 pb-40">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
-                <h2 class="text-5xl md:text-7xl font-black uppercase italic bg-orange-600 text-white px-8 py-4 shadow-[12px_12px_0px_white] brutal-heading">Arcade</h2>
-                <button onclick="resetArcadeSteps()" class="px-12 py-5 bg-white text-black font-black uppercase border-4 border-black shadow-[8px_8px_0px_var(--lime)] text-xl">CHOOSE MODULE</button>
+        <div class="max-w-7xl mx-auto px-6 space-y-10 pb-40">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <h2 class="text-5xl md:text-7xl font-black uppercase italic bg-orange-600 text-white px-8 py-4 shadow-[10px_10px_0px_white] brutal-heading select-none transform -skew-x-12">Arcade</h2>
+                <button onclick="resetArcadeSteps()" onmousedown="createRipple(event)" class="interactive-btn px-8 py-4 bg-white text-black font-black uppercase border-4 border-black shadow-[6px_6px_0px_var(--lime)] text-lg hover:bg-lime">CHANGE MODULE</button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                <div class="lg:col-span-3">
-                    <div class="relative neo-box border-8 overflow-hidden">
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- Game Container (Wider on PC) -->
+                <div class="lg:col-span-8 xl:col-span-9">
+                    <div class="relative neo-box border-8 overflow-hidden group bg-black">
                         <canvas id="game-canvas"></canvas>
-                        <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/95">
-                            <div class="text-center p-8 md:p-16 border-8 border-white bg-black shadow-[15px_15px_0px_var(--lime)] w-[85%]">
-                                <h3 id="overlay-title" class="text-3xl md:text-5xl font-black uppercase mb-10 italic squiddrill-title">INITIATE MENU</h3>
-                                <button id="overlay-btn" onclick="openArcadeMenu()" class="bg-white text-black px-12 py-6 text-2xl font-black uppercase hover:bg-lime border-4 border-black w-full sm:w-auto">SETUP MODULE</button>
+                        
+                        <!-- Overlay Menu -->
+                        <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/95 z-20">
+                            <div class="text-center p-8 border-8 border-white bg-black shadow-[10px_10px_0px_var(--lime)] max-w-[90%]">
+                                <h3 id="overlay-title" class="text-3xl md:text-5xl font-black uppercase mb-8 italic squiddrill-title select-none text-white">SYSTEM READY</h3>
+                                <button id="overlay-btn" onclick="openArcadeMenu()" onmousedown="createRipple(event)" class="interactive-btn bg-white text-black px-10 py-5 text-xl font-black uppercase hover:bg-lime border-4 border-black w-full">INITIALIZE</button>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Mobile Controls Hint -->
+                    <p class="md:hidden text-center mt-4 mono text-xs opacity-50 uppercase">Tap to Jump • Swipe to Turn</p>
                 </div>
-                <div class="lg:col-span-1 space-y-8 flex flex-col">
-                    <!-- ABORT AND SCORE MOVED TO TOP -->
-                    <a href="https://squiddrill.fun" class="back-btn text-xl mb-4">RAGE QUIT</a>
 
-                    <div class="neo-box bg-cyan-400 p-8 text-black text-center">
-                        <span class="mono text-xs font-black uppercase block mb-2">OUTPUT</span>
-                        <span id="current-score" class="text-6xl font-black italic">000</span>
+                <!-- Sidebar (Score & Stats) -->
+                <div class="lg:col-span-4 xl:col-span-3 space-y-8 flex flex-col">
+                    <a href="https://squiddrill.fun" class="back-btn interactive-btn text-xl w-full" onmousedown="createRipple(event)">RAGE QUIT</a>
+
+                    <div class="neo-box bg-cyan-400 p-8 text-black text-center hover:scale-[1.02] transition-transform select-none">
+                        <span class="mono text-xs font-black uppercase block mb-2 opacity-70">CURRENT SCORE</span>
+                        <span id="current-score" class="text-7xl font-black italic tracking-tighter">000</span>
                     </div>
 
-                    <div class="neo-box bg-white p-8 text-black">
-                        <h3 class="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">LEADERBOARD</h3>
-                        <div id="leaderboard-list" class="space-y-4 mono font-black uppercase text-sm">
-                            <p class="opacity-50 italic uppercase tracking-widest">Querying Records...</p>
+                    <div class="neo-box bg-white p-6 text-black flex-grow">
+                        <h3 class="text-xl font-black uppercase mb-6 border-b-4 border-black pb-3 select-none">LEADERBOARD</h3>
+                        <div id="leaderboard-list" class="space-y-3 mono font-bold uppercase text-sm">
+                            <div class="animate-pulse opacity-50">CONNECTING...</div>
                         </div>
                     </div>
                 </div>
@@ -144,49 +215,177 @@
             document.getElementById('game-step-1').classList.add('hidden'); document.getElementById('game-step-2').classList.remove('hidden');
         };
         window.selectDevice = (mode) => { selectedInputMode = mode; document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.remove('hidden'); };
-        window.openArcadeMenu = () => { if (currentActiveSessionName && selectedInputMode) { document.getElementById('game-modal').style.display = 'flex'; document.getElementById('game-step-1').classList.add('hidden'); document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.remove('hidden'); } else { window.resetArcadeSteps(); } };
+        window.openArcadeMenu = () => { if (currentActiveSessionName) { document.getElementById('game-modal').style.display = 'flex'; document.getElementById('game-step-1').classList.add('hidden'); document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.remove('hidden'); } else { window.resetArcadeSteps(); } };
         window.resetArcadeSteps = () => { document.getElementById('game-modal').style.display = 'flex'; document.getElementById('game-step-1').classList.remove('hidden'); document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.add('hidden'); if (currentActiveSessionName) document.getElementById('arcade-nickname').value = currentActiveSessionName; };
 
         const updateLeaderboardUI = () => {
             const list = document.getElementById('leaderboard-list'); if (!list) return;
             const uniqueEntries = {}; leaderboardData.forEach(d => { if (d.game === currentGame) { if (!uniqueEntries[d.name] || d.score > uniqueEntries[d.name].score) uniqueEntries[d.name] = d; } });
             const filtered = Object.values(uniqueEntries).sort((a,b) => b.score - a.score).slice(0, 5);
-            list.innerHTML = filtered.length ? "" : "<p class='opacity-50 italic'>Node Empty...</p>";
-            filtered.forEach((entry, idx) => { list.innerHTML += `<div class="flex justify-between border-b-2 border-white/10 pb-1"><span class="mono">${idx + 1}. ${entry.name}</span><span class="text-pink-600 font-black">${Math.floor(entry.score)}</span></div>`; });
+            list.innerHTML = filtered.length ? "" : "<p class='opacity-50 italic'>NO RECORDS FOUND</p>";
+            filtered.forEach((entry, idx) => { list.innerHTML += `<div class="flex justify-between border-b-2 border-grey/20 pb-2"><span class="mono tracking-tight">${idx + 1}. ${entry.name}</span><span class="text-pink-600 font-black">${Math.floor(entry.score)}</span></div>`; });
         };
 
         window.saveArcadeScore = async (score) => { if (!user || score < 1) return; try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: currentActiveSessionName.toUpperCase(), score: score, game: currentGame, timestamp: Date.now() }); } catch (e) {} };
-
         window.addEventListener('load', init);
-        document.addEventListener('mousemove', e => { const cursor = document.getElementById('cursor'); if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+        
+        // --- BILLION DOLLAR JS: CURSOR & INTERACTION ---
+        document.addEventListener('mousemove', e => { 
+            const cursor = document.getElementById('cursor'); 
+            if (cursor) { 
+                cursor.style.left = e.clientX + 'px'; 
+                cursor.style.top = e.clientY + 'px'; 
+            } 
+        });
+        document.addEventListener('mousedown', () => { const c = document.getElementById('cursor'); if(c) { c.style.transform = "scale(0.5)"; c.style.borderColor = "var(--pink)"; } });
+        document.addEventListener('mouseup', () => { const c = document.getElementById('cursor'); if(c) { c.style.transform = "scale(1)"; c.style.borderColor = "var(--lime)"; } });
 
-        // --- GAME ENGINE ---
+        window.createRipple = (event) => {
+            const button = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+            const rect = button.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - rect.left - radius}px`;
+            circle.style.top = `${event.clientY - rect.top - radius}px`;
+            circle.classList.add("ripple");
+            const ripple = button.getElementsByClassName("ripple")[0];
+            if (ripple) { ripple.remove(); }
+            button.appendChild(circle);
+        };
+
+        // --- GAME ENGINE 2.0 (MOBILE OPTIMIZED) ---
         const canvas = document.getElementById('game-canvas'); const ctx = canvas.getContext('2d');
         let currentGame = 'dino', gameActive = false, score = 0, loop, frame = 0, obstacles = [], snake = [{x: 5, y: 5}], food = {x: 10, y: 10}, dir = {x: 1, y: 0}, dino = { y: 390, v: 0 };
-        window.switchGame = (type) => { currentGame = type; document.getElementById('game-modal').style.display='none'; gameActive = false; updateLeaderboardUI(); document.getElementById('overlay-title').innerText = type.toUpperCase() + " READY"; document.getElementById('game-overlay').style.display = 'flex'; document.getElementById('overlay-btn').innerText = "BOOT ENGINE"; document.getElementById('overlay-btn').onclick = startGame; };
-        window.startGame = () => { document.getElementById('game-overlay').style.display = 'none'; gameActive = true; score = 0; obstacles = []; snake = [{x:5,y:5}]; dir = {x:1,y:0}; frame = 0; runLoop(); };
-        const initGame = () => { canvas.width = canvas.parentElement.clientWidth; canvas.height = 450; }; initGame();
+        
+        // Mobile Detection
+        const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
+
+        // Touch Control Variables
+        let touchStartX = 0, touchStartY = 0;
+
+        window.switchGame = (type) => { currentGame = type; document.getElementById('game-modal').style.display='none'; gameActive = false; updateLeaderboardUI(); document.getElementById('overlay-title').innerText = type.toUpperCase() + " LOADED"; document.getElementById('game-overlay').style.display = 'flex'; document.getElementById('overlay-btn').innerText = "START ENGINE"; document.getElementById('overlay-btn').onclick = startGame; };
+        
+        window.startGame = () => { document.getElementById('game-overlay').style.display = 'none'; gameActive = true; score = 0; obstacles = []; snake = [{x:5,y:5}]; dir = {x:1,y:0}; frame = 0; dino.y = 390; dino.v = 0; runLoop(); };
+        
+        const initGame = () => { 
+            // Dynamic Canvas Sizing
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth; 
+            canvas.height = 450; 
+        }; 
+        window.addEventListener('resize', initGame);
+        initGame();
+
         const runLoop = () => {
-            if(!gameActive) return; ctx.fillStyle = '#000000'; ctx.fillRect(0,0,canvas.width, canvas.height);
+            if(!gameActive) return; 
+            ctx.fillStyle = '#000000'; ctx.fillRect(0,0,canvas.width, canvas.height);
+            
             if(currentGame === 'dino') {
-                dino.v += 1.2; dino.y += dino.v; if(dino.y > 390) { dino.y = 390; dino.v = 0; }
-                if(frame % 80 === 0) obstacles.push({x: canvas.width, w: 40, h: 50 + Math.random()*60});
-                ctx.fillStyle = '#C3FF00'; ctx.fillRect(60, dino.y, 45, 45); ctx.fillStyle = '#FF0055';
-                obstacles.forEach(o => { o.x -= 7 + (score/200); ctx.fillRect(o.x, 450 - o.h, o.w, o.h); if(o.x < 105 && o.x > 15 && dino.y + 45 > 450 - o.h) gameOver(); });
-                obstacles = obstacles.filter(o => o.x > -50); score += 0.15;
+                // Gravity & Jump Physics
+                dino.v += isMobile ? 0.9 : 1.2; // Lower gravity on mobile for floatier jumps
+                dino.y += dino.v; 
+                if(dino.y > 390) { dino.y = 390; dino.v = 0; }
+                
+                // Obstacle Spawning - Slower on mobile
+                const spawnRate = isMobile ? 100 : 80;
+                if(frame % spawnRate === 0) obstacles.push({x: canvas.width, w: 40, h: 50 + Math.random()*60});
+                
+                // Draw Dino
+                ctx.fillStyle = '#C3FF00'; ctx.fillRect(60, dino.y, 45, 45); 
+                
+                // Draw & Move Obstacles
+                ctx.fillStyle = '#FF0055';
+                obstacles.forEach(o => { 
+                    o.x -= isMobile ? (5 + score/300) : (7 + score/200); // Slower speed on mobile
+                    ctx.fillRect(o.x, 450 - o.h, o.w, o.h); 
+                    // Collision
+                    if(o.x < 105 && o.x > 15 && dino.y + 45 > 450 - o.h) gameOver(); 
+                });
+                obstacles = obstacles.filter(o => o.x > -50); 
+                score += 0.15;
             } else {
-                if(frame % 7 === 0) {
-                    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y}; const gridW = Math.floor(canvas.width / 25);
-                    if(head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= 18 || snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
-                    snake.unshift(head); if(head.x === food.x && head.y === food.y) { score += 10; food = {x: Math.floor(Math.random()*(gridW-1)), y: Math.floor(Math.random()*17)}; } else snake.pop();
+                // Snake Logic
+                // Update speed: Slower on mobile
+                const updateRate = isMobile ? 10 : 7;
+                
+                if(frame % updateRate === 0) {
+                    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y}; 
+                    const cellSize = 25;
+                    const gridW = Math.floor(canvas.width / cellSize);
+                    const gridH = Math.floor(canvas.height / cellSize);
+                    
+                    // Wall Collision
+                    if(head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= gridH || snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+                    
+                    snake.unshift(head); 
+                    if(head.x === food.x && head.y === food.y) { 
+                        score += 10; 
+                        food = {x: Math.floor(Math.random()*(gridW-1)), y: Math.floor(Math.random()*(gridH-1))}; 
+                    } else snake.pop();
                 }
-                ctx.fillStyle = '#00F0FF'; snake.forEach(s => ctx.fillRect(s.x*25, s.y*25, 23, 23)); ctx.fillStyle = '#FF0055'; ctx.fillRect(food.x*25, food.y*25, 23, 23);
+                
+                // Draw Snake & Food
+                const cellSize = 25;
+                ctx.fillStyle = '#00F0FF'; snake.forEach(s => ctx.fillRect(s.x*cellSize, s.y*cellSize, cellSize-2, cellSize-2)); 
+                ctx.fillStyle = '#FF0055'; ctx.fillRect(food.x*cellSize, food.y*cellSize, cellSize-2, cellSize-2);
             }
-            document.getElementById('current-score').innerText = Math.floor(score).toString().padStart(3, '0'); frame++; loop = requestAnimationFrame(runLoop);
+            
+            document.getElementById('current-score').innerText = Math.floor(score).toString().padStart(3, '0'); 
+            frame++; 
+            loop = requestAnimationFrame(runLoop);
         };
-        const gameOver = () => { gameActive = false; cancelAnimationFrame(loop); window.saveArcadeScore(Math.floor(score)); document.getElementById('overlay-title').innerText = "SKILL ISSUE"; document.getElementById('overlay-btn').innerText = "REBOOT"; document.getElementById('overlay-btn').onclick = startGame; document.getElementById('game-overlay').style.display = 'flex'; };
-        window.handleControl = (type) => { if (currentGame === 'dino' && type === 'up' && dino.y === 390) dino.v = -22; if (currentGame === 'snake') { if(type === 'up' && dir.y !== 1) dir = {x:0, y:-1}; if(type === 'down' && dir.y !== -1) dir = {x:0, y:1}; if(type === 'left' && dir.x !== 1) dir = {x:-1, y:0}; if(type === 'right' && dir.x !== -1) dir = {x:1, y:0}; } };
-        window.addEventListener('keydown', e => { if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) { e.preventDefault(); if(e.code === 'Space' || e.code === 'ArrowUp') handleControl('up'); if(e.code === 'ArrowDown') handleControl('down'); if(e.code === 'ArrowLeft') handleControl('left'); if(e.code === 'ArrowRight') handleControl('right'); } });
+        
+        const gameOver = () => { gameActive = false; cancelAnimationFrame(loop); window.saveArcadeScore(Math.floor(score)); document.getElementById('overlay-title').innerText = "GAME OVER"; document.getElementById('overlay-btn').innerText = "RETRY"; document.getElementById('overlay-btn').onclick = startGame; document.getElementById('game-overlay').style.display = 'flex'; };
+        
+        window.handleControl = (type) => { 
+            if (currentGame === 'dino' && (type === 'up' || type === 'tap') && dino.y === 390) dino.v = isMobile ? -18 : -22; 
+            if (currentGame === 'snake') { 
+                if(type === 'up' && dir.y !== 1) dir = {x:0, y:-1}; 
+                if(type === 'down' && dir.y !== -1) dir = {x:0, y:1}; 
+                if(type === 'left' && dir.x !== 1) dir = {x:-1, y:0}; 
+                if(type === 'right' && dir.x !== -1) dir = {x:1, y:0}; 
+            } 
+        };
+        
+        window.addEventListener('keydown', e => { 
+            if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) { 
+                e.preventDefault(); 
+                if(e.code === 'Space' || e.code === 'ArrowUp') handleControl('up'); 
+                if(e.code === 'ArrowDown') handleControl('down'); 
+                if(e.code === 'ArrowLeft') handleControl('left'); 
+                if(e.code === 'ArrowRight') handleControl('right'); 
+            } 
+        });
+
+        // --- TOUCH ENGINE 2.0 ---
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            // Prevent scrolling when touching canvas
+            e.preventDefault(); 
+            if(currentGame === 'dino') handleControl('tap');
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', e => e.preventDefault(), {passive: false}); // Prevent scroll
+
+        canvas.addEventListener('touchend', e => {
+            if(currentGame === 'snake') {
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                const dx = touchEndX - touchStartX;
+                const dy = touchEndY - touchStartY;
+                
+                if(Math.abs(dx) > Math.abs(dy)) {
+                     if(dx > 30) handleControl('right');
+                     else if(dx < -30) handleControl('left');
+                } else {
+                     if(dy > 30) handleControl('down');
+                     else if(dy < -30) handleControl('up');
+                }
+            }
+        }, {passive: false});
     </script>
 </body>
 </html>
