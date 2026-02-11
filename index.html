@@ -6,12 +6,8 @@
     <meta name="theme-color" content="#0a0a0a">
     <meta name="color-scheme" content="dark">
     
-    <!-- Primary Meta Tags -->
     <title>SQUIDDRILL | ARCADE 💀</title>
-    <meta name="title" content="Suggest Title💀">
-    <meta name="description" content="Digital monolith and logic repository of Bhavya Kapatel. Exploring software architecture, automation, and interactive design.">
-    <link rel="icon" type="image/png" href="arcade.png">
-    <link rel="canonical" href="https://arcade.squiddrill.fun" />
+    <link rel="icon" type="image/jpg" href="arcade.jpg">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -48,7 +44,7 @@
 
     <div id="cursor"></div>
 
-    <!-- Arcade Modal -->
+    <!-- Arcade Setup Modal -->
     <div id="game-modal" class="modal-overlay">
         <div class="grey-dialog">
             <h2 class="text-4xl md:text-5xl font-black text-white uppercase italic mb-6 tracking-tighter brutal-heading">Sector Entry</h2>
@@ -63,8 +59,8 @@
             </div>
             <div id="game-step-3" class="hidden flex flex-col gap-4">
                 <p class="mono text-white mb-4 text-sm opacity-60 uppercase tracking-widest">CHOOSE MODULE</p>
-                <button onclick="switchGame('dino')" class="bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Dino</button>
-                <button onclick="switchGame('snake')" class="bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Snake</button>
+                <button onclick="switchGame('dino')" class="bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Dino Survival</button>
+                <button onclick="switchGame('snake')" class="bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Classic Snake</button>
             </div>
             <button onclick="document.getElementById('game-modal').style.display='none'" class="mt-10 text-white font-black uppercase text-xs border-b-2 border-white opacity-50">ABORT</button>
         </div>
@@ -103,13 +99,13 @@
                     </div>
                 </div>
                 <div class="lg:col-span-1 space-y-8 flex flex-col">
-                    <!-- SCORE OUTPUT MOVED TO TOP AS REQUESTED -->
+                    <!-- ABORT AND SCORE MOVED TO TOP -->
+                    <a href="https://squiddrill.fun" class="back-btn text-xl mb-4">RAGE QUIT</a>
+
                     <div class="neo-box bg-cyan-400 p-8 text-black text-center">
                         <span class="mono text-xs font-black uppercase block mb-2">OUTPUT</span>
                         <span id="current-score" class="text-6xl font-black italic">000</span>
                     </div>
-                    
-                    <a href="https://squiddrill.fun" class="back-btn text-xl mb-4">RAGE QUIT</a>
 
                     <div class="neo-box bg-white p-8 text-black">
                         <h3 class="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">LEADERBOARD</h3>
