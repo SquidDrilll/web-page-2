@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Primary Meta Tags -->
+    <title>SQUIDDRILL | ARCADE 💀</title>
+    <meta name="title" content="Suggest Title💀">
+    <meta name="description" content="Digital monolith and logic repository of Bhavya Kapatel. Exploring software architecture, automation, and interactive design.">
+    <link rel="icon" type="image/jpg" href="arcade.jpg">
+    <link rel="canonical" href="https://arcade.squiddrill.fun" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@900&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0a0a0a; --white: #ffffff; --grey: #333333; --lime: #C3FF00; --pink: #FF0055; --cyan: #00F0FF; --orange: #FF5C00;
+        }
+        @keyframes flicker { 0% { opacity: 0.97; } 5% { opacity: 0.95; } 100% { opacity: 1; } }
+        body { font-family: 'Public Sans', sans-serif; background-color: var(--bg); color: var(--white); overflow-x: hidden; background-image: radial-gradient(rgba(255,255,255,0.08) 1.5px, transparent 1.5px); background-size: 35px 35px; animation: flicker 0.15s infinite; }
+        @media (pointer: fine) { body { cursor: none; } }
+        #cursor { width: 24px; height: 24px; background: #fff; border-radius: 2px; position: fixed; pointer-events: none; z-index: 1000000; mix-blend-mode: difference; display: none; align-items: center; justify-content: center; }
+        @media (pointer: fine) { #cursor { display: flex; } }
+        @keyframes brutal-pulse { 0%, 100% { text-shadow: 4px 4px 0px var(--pink); transform: skewX(-10deg) scale(1); } 50% { text-shadow: -4px -4px 0px var(--cyan); transform: skewX(-8deg) scale(1.02); } }
+        .brutal-heading { display: inline-block; color: var(--lime); transform: skewX(-10deg); text-shadow: 6px 6px 0px var(--pink); animation: brutal-pulse 4s infinite ease-in-out; }
+        .neo-box { background: var(--bg); border: 4px solid var(--lime); box-shadow: 14px 14px 0px 0px var(--lime); transform: translate(-6px, -6px); transition: all 0.25s; position: relative; }
+        @keyframes glitch-text { 0% { transform: translate(0); text-shadow: 3px 3px var(--pink), -3px -3px var(--cyan); } 2% { transform: translate(-2px, 2px); } 100% { transform: translate(0); } }
+        .squiddrill-title { animation: glitch-text 3s infinite; }
+        .nav-link { padding: 0.75rem 1.25rem; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; border: 4px solid white; display: flex; align-items: center; gap: 6px; background: white; color: black; box-shadow: 4px 4px 0px rgba(255,255,255,0.2); }
+        .nav-link:hover { background: var(--lime); transform: scale(1.1) rotate(-1deg); }
+        .nav-active { background: var(--orange) !important; color: white !important; box-shadow: 8px 8px 0px white !important; }
+        .modal-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .grey-dialog { background: #1a1a1a; border: 8px solid white; box-shadow: 30px 30px 0px 0px var(--lime); padding: 3.5rem; width: 95%; max-width: 600px; text-align: center; }
+        #game-canvas { image-rendering: pixelated; background: #000000; width: 100%; height: 450px; border: 8px solid white; touch-action: none; }
+        .back-btn { background: white; color: black; border: 4px solid black; font-weight: 900; text-transform: uppercase; box-shadow: 8px 8px 0px var(--lime); padding: 1.5rem 3rem; display: inline-block; cursor: pointer; width: 100%; text-align: center; }
+        .full-view-container { position: fixed; inset: 0; overflow-y: auto; z-index: 1500; background: black; padding-top: 100px; padding-bottom: 100px; }
+        @media (max-width: 640px) { .nav-link span { display: none; } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="cursor"></div>
+
+    <!-- Arcade Modal -->
+    <div id="game-modal" class="modal-overlay">
+        <div class="grey-dialog">
+            <h2 class="text-4xl md:text-5xl font-black text-white uppercase italic mb-6 tracking-tighter brutal-heading">Sector Entry</h2>
+            <div id="game-step-1" class="space-y-6">
+                <input id="arcade-nickname" type="text" maxlength="12" placeholder="USERNAME (MANDATORY)" class="w-full bg-black border-4 border-white p-6 mono text-white uppercase outline-none focus:border-lime text-center text-2xl">
+                <button onclick="validateNickname()" class="w-full bg-white text-black py-4 font-black uppercase text-xl border-4 border-black shadow-[6px_6px_0px_var(--lime)]">CONTINUE</button>
+            </div>
+            <div id="game-step-2" class="hidden flex flex-col gap-4">
+                <p class="mono text-white mb-4 text-sm opacity-60 uppercase tracking-widest">Select Control Interface</p>
+                <button onclick="selectDevice('desktop')" class="bg-white text-black py-5 font-black uppercase text-xl border-4 border-black shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Keyboard</button>
+                <button onclick="selectDevice('touch')" class="bg-pink-500 text-white py-5 font-black uppercase text-xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Touch</button>
+            </div>
+            <div id="game-step-3" class="hidden flex flex-col gap-4">
+                <p class="mono text-white mb-4 text-sm opacity-60 uppercase tracking-widest">CHOOSE MODULE</p>
+                <button onclick="switchGame('dino')" class="bg-lime text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Dino</button>
+                <button onclick="switchGame('snake')" class="bg-cyan text-black py-5 font-black uppercase text-2xl border-4 border-white shadow-[8px_8px_0px_white] hover:translate-x-2 transition-transform">Snake</button>
+            </div>
+            <button onclick="document.getElementById('game-modal').style.display='none'" class="mt-10 text-white font-black uppercase text-xs border-b-2 border-white opacity-50">ABORT</button>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 left-0 w-full z-[2000] bg-black border-b-8 border-white px-6 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <span class="mono text-xs md:text-sm font-black bg-white text-black px-4 py-2 uppercase">
+                Arcade-Visitors <span id="v-count" class="text-pink-600 animate-pulse">...</span> ⚡
+            </span>
+        </div>
+        <div class="flex gap-2 sm:gap-3">
+            <a href="https://squiddrill.fun" class="nav-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+            <a href="https://arcade.squiddrill.fun" class="nav-link nav-active"><i class="fa-solid fa-gamepad"></i> <span>Arcade</span></a>
+            <a href="https://socials.squiddrill.fun" class="nav-link"><i class="fa-solid fa-network-wired"></i> <span>Socials</span></a>
+        </div>
+    </nav>
+
+    <div id="arcade-view" class="page-view full-view-container">
+        <div class="max-w-6xl mx-auto px-6 space-y-10 pb-40">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                <h2 class="text-5xl md:text-7xl font-black uppercase italic bg-orange-600 text-white px-8 py-4 shadow-[12px_12px_0px_white] brutal-heading">Arcade</h2>
+                <button onclick="resetArcadeSteps()" class="px-12 py-5 bg-white text-black font-black uppercase border-4 border-black shadow-[8px_8px_0px_var(--lime)] text-xl">CHOOSE MODULE</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+                <div class="lg:col-span-3">
+                    <div class="relative neo-box border-8 overflow-hidden">
+                        <canvas id="game-canvas"></canvas>
+                        <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/95">
+                            <div class="text-center p-8 md:p-16 border-8 border-white bg-black shadow-[15px_15px_0px_var(--lime)] w-[85%]">
+                                <h3 id="overlay-title" class="text-3xl md:text-5xl font-black uppercase mb-10 italic squiddrill-title">INITIATE MENU</h3>
+                                <button id="overlay-btn" onclick="openArcadeMenu()" class="bg-white text-black px-12 py-6 text-2xl font-black uppercase hover:bg-lime border-4 border-black w-full sm:w-auto">SETUP MODULE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-1 space-y-8 flex flex-col">
+                    <!-- SCORE OUTPUT MOVED TO TOP AS REQUESTED -->
+                    <div class="neo-box bg-cyan-400 p-8 text-black text-center">
+                        <span class="mono text-xs font-black uppercase block mb-2">OUTPUT</span>
+                        <span id="current-score" class="text-6xl font-black italic">000</span>
+                    </div>
+                    
+                    <a href="https://squiddrill.fun" class="back-btn text-xl mb-4">RAGE QUIT</a>
+
+                    <div class="neo-box bg-white p-8 text-black">
+                        <h3 class="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">LEADERBOARD</h3>
+                        <div id="leaderboard-list" class="space-y-4 mono font-black uppercase text-sm">
+                            <p class="opacity-50 italic uppercase tracking-widest">Querying Records...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyC-ljBHE316s_9ssHeBjyQ2zF6lpNo93VY", authDomain: "website-ddb0c.firebaseapp.com", projectId: "website-ddb0c", storageBucket: "website-ddb0c.firebasestorage.app", messagingSenderId: "143641913342", appId: "1:143641913342:web:ef0f6494e3676d6396c2af" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app); const appId = "web-page";
+        let user = null; let leaderboardData = []; let currentActiveSessionName = ""; let selectedInputMode = 'desktop';
+
+        const init = async () => {
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, async (u) => {
+                user = u; if (!user) return;
+                const statsDoc = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counters');
+                try { const snap = await getDoc(statsDoc); if (!snap.exists()) await setDoc(statsDoc, { total: 1 }); else await updateDoc(statsDoc, { total: increment(1) }); } catch (e) {}
+                onSnapshot(statsDoc, (doc) => { document.getElementById('v-count').innerText = (doc.data()?.total || 0).toLocaleString(); });
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), (snapshot) => { leaderboardData = snapshot.docs.map(d => d.data()); updateLeaderboardUI(); });
+            });
+        };
+
+        window.validateNickname = () => {
+            const nameInput = document.getElementById('arcade-nickname'); const newName = nameInput.value.trim().toUpperCase();
+            if (!newName) return; currentActiveSessionName = newName;
+            document.getElementById('game-step-1').classList.add('hidden'); document.getElementById('game-step-2').classList.remove('hidden');
+        };
+        window.selectDevice = (mode) => { selectedInputMode = mode; document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.remove('hidden'); };
+        window.openArcadeMenu = () => { if (currentActiveSessionName && selectedInputMode) { document.getElementById('game-modal').style.display = 'flex'; document.getElementById('game-step-1').classList.add('hidden'); document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.remove('hidden'); } else { window.resetArcadeSteps(); } };
+        window.resetArcadeSteps = () => { document.getElementById('game-modal').style.display = 'flex'; document.getElementById('game-step-1').classList.remove('hidden'); document.getElementById('game-step-2').classList.add('hidden'); document.getElementById('game-step-3').classList.add('hidden'); if (currentActiveSessionName) document.getElementById('arcade-nickname').value = currentActiveSessionName; };
+
+        const updateLeaderboardUI = () => {
+            const list = document.getElementById('leaderboard-list'); if (!list) return;
+            const uniqueEntries = {}; leaderboardData.forEach(d => { if (d.game === currentGame) { if (!uniqueEntries[d.name] || d.score > uniqueEntries[d.name].score) uniqueEntries[d.name] = d; } });
+            const filtered = Object.values(uniqueEntries).sort((a,b) => b.score - a.score).slice(0, 5);
+            list.innerHTML = filtered.length ? "" : "<p class='opacity-50 italic'>Node Empty...</p>";
+            filtered.forEach((entry, idx) => { list.innerHTML += `<div class="flex justify-between border-b-2 border-white/10 pb-1"><span class="mono">${idx + 1}. ${entry.name}</span><span class="text-pink-600 font-black">${Math.floor(entry.score)}</span></div>`; });
+        };
+
+        window.saveArcadeScore = async (score) => { if (!user || score < 1) return; try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: currentActiveSessionName.toUpperCase(), score: score, game: currentGame, timestamp: Date.now() }); } catch (e) {} };
+
+        window.addEventListener('load', init);
+        document.addEventListener('mousemove', e => { const cursor = document.getElementById('cursor'); if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+
+        // --- GAME ENGINE ---
+        const canvas = document.getElementById('game-canvas'); const ctx = canvas.getContext('2d');
+        let currentGame = 'dino', gameActive = false, score = 0, loop, frame = 0, obstacles = [], snake = [{x: 5, y: 5}], food = {x: 10, y: 10}, dir = {x: 1, y: 0}, dino = { y: 390, v: 0 };
+        window.switchGame = (type) => { currentGame = type; document.getElementById('game-modal').style.display='none'; gameActive = false; updateLeaderboardUI(); document.getElementById('overlay-title').innerText = type.toUpperCase() + " READY"; document.getElementById('game-overlay').style.display = 'flex'; document.getElementById('overlay-btn').innerText = "BOOT ENGINE"; document.getElementById('overlay-btn').onclick = startGame; };
+        window.startGame = () => { document.getElementById('game-overlay').style.display = 'none'; gameActive = true; score = 0; obstacles = []; snake = [{x:5,y:5}]; dir = {x:1,y:0}; frame = 0; runLoop(); };
+        const initGame = () => { canvas.width = canvas.parentElement.clientWidth; canvas.height = 450; }; initGame();
+        const runLoop = () => {
+            if(!gameActive) return; ctx.fillStyle = '#000000'; ctx.fillRect(0,0,canvas.width, canvas.height);
+            if(currentGame === 'dino') {
+                dino.v += 1.2; dino.y += dino.v; if(dino.y > 390) { dino.y = 390; dino.v = 0; }
+                if(frame % 80 === 0) obstacles.push({x: canvas.width, w: 40, h: 50 + Math.random()*60});
+                ctx.fillStyle = '#C3FF00'; ctx.fillRect(60, dino.y, 45, 45); ctx.fillStyle = '#FF0055';
+                obstacles.forEach(o => { o.x -= 7 + (score/200); ctx.fillRect(o.x, 450 - o.h, o.w, o.h); if(o.x < 105 && o.x > 15 && dino.y + 45 > 450 - o.h) gameOver(); });
+                obstacles = obstacles.filter(o => o.x > -50); score += 0.15;
+            } else {
+                if(frame % 7 === 0) {
+                    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y}; const gridW = Math.floor(canvas.width / 25);
+                    if(head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= 18 || snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+                    snake.unshift(head); if(head.x === food.x && head.y === food.y) { score += 10; food = {x: Math.floor(Math.random()*(gridW-1)), y: Math.floor(Math.random()*17)}; } else snake.pop();
+                }
+                ctx.fillStyle = '#00F0FF'; snake.forEach(s => ctx.fillRect(s.x*25, s.y*25, 23, 23)); ctx.fillStyle = '#FF0055'; ctx.fillRect(food.x*25, food.y*25, 23, 23);
+            }
+            document.getElementById('current-score').innerText = Math.floor(score).toString().padStart(3, '0'); frame++; loop = requestAnimationFrame(runLoop);
+        };
+        const gameOver = () => { gameActive = false; cancelAnimationFrame(loop); window.saveArcadeScore(Math.floor(score)); document.getElementById('overlay-title').innerText = "SKILL ISSUE"; document.getElementById('overlay-btn').innerText = "REBOOT"; document.getElementById('overlay-btn').onclick = startGame; document.getElementById('game-overlay').style.display = 'flex'; };
+        window.handleControl = (type) => { if (currentGame === 'dino' && type === 'up' && dino.y === 390) dino.v = -22; if (currentGame === 'snake') { if(type === 'up' && dir.y !== 1) dir = {x:0, y:-1}; if(type === 'down' && dir.y !== -1) dir = {x:0, y:1}; if(type === 'left' && dir.x !== 1) dir = {x:-1, y:0}; if(type === 'right' && dir.x !== -1) dir = {x:1, y:0}; } };
+        window.addEventListener('keydown', e => { if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) { e.preventDefault(); if(e.code === 'Space' || e.code === 'ArrowUp') handleControl('up'); if(e.code === 'ArrowDown') handleControl('down'); if(e.code === 'ArrowLeft') handleControl('left'); if(e.code === 'ArrowRight') handleControl('right'); } });
+    </script>
+</body>
+</html>
